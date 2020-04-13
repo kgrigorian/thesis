@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_mobile_client/resources/mock_queue.dart';
 
 import 'media_controls.dart';
 
 class MediaPlayerTask extends BackgroundAudioTask {
-  MediaPlayerTask(this.queue);
-  final List<MediaItem> queue;
+  // List<MediaItem> queu = queue;
   int _queueIndex = -1;
   AudioPlayer _audioPlayer = AudioPlayer();
   Completer _completer = Completer();

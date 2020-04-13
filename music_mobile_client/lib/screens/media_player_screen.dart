@@ -14,14 +14,18 @@ class MediaPlayerScreen extends StatefulWidget {
   _MediaPlayerScreenState createState() => _MediaPlayerScreenState();
 }
 
+void audioPlayerTaskEntrypoint() async {
+  AudioServiceBackground.run(() => MediaPlayerTask());
+}
+
 class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
   @override
   void initState() {
     AudioService.start(
-      backgroundTaskEntrypoint: () => AudioServiceBackground.run(
-        () => MediaPlayerTask(widget.queue),
-      ),
+      backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+      androidNotificationChannelName: 'Audio Service Demo',
       notificationColor: 0xFF2196f3,
+      androidNotificationIcon: 'mipmap/ic_launcher',
       enableQueue: true,
     );
     super.initState();
@@ -33,71 +37,69 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
       appBar: AppBar(
         title: const Text('Audio Service Demo'),
       ),
-      body: AudioServiceWidget(
-        child: Center(
-          child: StreamBuilder<ScreenState>(
-            stream: _screenStateStream,
-            builder: (context, snapshot) {
-              final screenState = snapshot.data;
-              final queue = screenState?.queue;
-              final mediaItem = screenState?.mediaItem;
-              final state = screenState?.playbackState;
-              final basicState = state?.basicState ?? BasicPlaybackState.none;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (queue != null && queue.isNotEmpty)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.skip_previous),
-                          iconSize: 64.0,
-                          onPressed: mediaItem == queue.first
-                              ? null
-                              : AudioService.skipToPrevious,
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.skip_next),
-                          iconSize: 64.0,
-                          onPressed: mediaItem == queue.last
-                              ? null
-                              : AudioService.skipToNext,
-                        ),
-                      ],
-                    ),
-                  if (mediaItem?.title != null) Text(mediaItem.title),
+      body: Center(
+        child: StreamBuilder<ScreenState>(
+          stream: _screenStateStream,
+          builder: (context, snapshot) {
+            final screenState = snapshot.data;
+            final queue = screenState?.queue;
+            final mediaItem = screenState?.mediaItem;
+            final state = screenState?.playbackState;
+            final basicState = state?.basicState ?? BasicPlaybackState.none;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (queue != null && queue.isNotEmpty)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (basicState == BasicPlaybackState.playing)
-                        pauseButton()
-                      else if (basicState == BasicPlaybackState.paused)
-                        playButton()
-                      else if (basicState == BasicPlaybackState.buffering ||
-                          basicState == BasicPlaybackState.skippingToNext ||
-                          basicState == BasicPlaybackState.skippingToPrevious)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 64.0,
-                            height: 64.0,
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      stopButton(),
+                      IconButton(
+                        icon: Icon(Icons.skip_previous),
+                        iconSize: 64.0,
+                        onPressed: mediaItem == queue.first
+                            ? null
+                            : AudioService.skipToPrevious,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.skip_next),
+                        iconSize: 64.0,
+                        onPressed: mediaItem == queue.last
+                            ? null
+                            : AudioService.skipToNext,
+                      ),
                     ],
                   ),
-                  if (basicState != BasicPlaybackState.none &&
-                      basicState != BasicPlaybackState.stopped) ...[
-                    PositionIndicator(mediaItem: mediaItem, state: state),
-                    Text("State: " +
-                        "$basicState".replaceAll(RegExp(r'^.*\.'), '')),
-                  ]
-                ],
-              );
-            },
-          ),
+                if (mediaItem?.title != null) Text(mediaItem.title),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (basicState == BasicPlaybackState.playing)
+                      pauseButton()
+                    else if (basicState == BasicPlaybackState.paused)
+                      playButton()
+                    else if (basicState == BasicPlaybackState.buffering ||
+                        basicState == BasicPlaybackState.skippingToNext ||
+                        basicState == BasicPlaybackState.skippingToPrevious)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: 64.0,
+                          height: 64.0,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    stopButton(),
+                  ],
+                ),
+                if (basicState != BasicPlaybackState.none &&
+                    basicState != BasicPlaybackState.stopped) ...[
+                  PositionIndicator(mediaItem: mediaItem, state: state),
+                  Text("State: " +
+                      "$basicState".replaceAll(RegExp(r'^.*\.'), '')),
+                ]
+              ],
+            );
+          },
         ),
       ),
     );
