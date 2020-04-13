@@ -7,6 +7,7 @@ import 'music_service.dart';
 /// Override methods in this class to set up routes and initialize services like
 /// database connections. See http://aqueduct.io/docs/http/channel/.
 class MusicServiceChannel extends ApplicationChannel {
+  ManagedContext context;
   /// Initialize services in this method.
   ///
   /// Implement this method to initialize services, read values from [options]
@@ -17,6 +18,15 @@ class MusicServiceChannel extends ApplicationChannel {
   Future prepare() async {
     logger.onRecord.listen(
         (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
+
+    @override
+    Future prepare() async {
+      final dataModel = ManagedDataModel.fromCurrentMirrorSystem();
+      final psc = PostgreSQLPersistentStore.fromConnectionInfo(
+          "admin", "password", "localhost", 5432, "music_service");
+
+      context = ManagedContext(dataModel, psc);
+    }
   }
 
   /// Construct the request channel.
@@ -28,12 +38,6 @@ class MusicServiceChannel extends ApplicationChannel {
   @override
   Controller get entryPoint {
     final router = Router();
-
-    // Prefer to use `link` instead of `linkFunction`.
-    // See: https://aqueduct.io/docs/http/request_controller/
-    router.route("/example").linkFunction((request) async {
-      return Response.ok({"key": "valudde"});
-    });
 
     router.route("/media/*").link(() => FileController("music/"));
 
