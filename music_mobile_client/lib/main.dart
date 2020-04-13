@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_mobile_client/env.dart';
 import 'package:rxdart/rxdart.dart';
 
 MediaControl playControl = MediaControl(
@@ -35,11 +36,13 @@ MediaControl stopControl = MediaControl(
 
 void main() => runApp(new MyApp());
 
+final String api = DebugEnvironment().api;
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Audio Service Demo',
+      title: 'Audio Player Client',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: AudioServiceWidget(child: MainScreen()),
     );
@@ -230,7 +233,7 @@ void _audioPlayerTaskEntrypoint() async {
 class AudioPlayerTask extends BackgroundAudioTask {
   final _queue = <MediaItem>[
     MediaItem(
-      id: "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3",
+      id: "http://192.168.0.187:8888/media/avocade.mp3",
       album: "Science Friday",
       title: "A Salute To Head-Scratching Science",
       artist: "Science Friday and WNYC Studios",
