@@ -1,3 +1,5 @@
+import 'package:music_service/controller/upload_controller.dart';
+
 import 'music_service.dart';
 
 /// This type initializes an application.
@@ -34,6 +36,8 @@ class MusicServiceChannel extends ApplicationChannel {
     });
 
     router.route("/media/*").link(() => FileController("music/"));
+
+    router.route("/upload").link(() => UploadController());
 
     return router;
   }
