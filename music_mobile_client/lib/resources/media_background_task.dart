@@ -3,20 +3,20 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_mobile_client/resources/mock_queue.dart';
-
+import 'package:music_mobile_client/core/services/media_persistance_service.dart';
 import 'media_controls.dart';
 
 class MediaPlayerTask extends BackgroundAudioTask {
-  // List<MediaItem> queu = queue;
+  List<MediaItem> mediaItemsQueue;
   int _queueIndex = -1;
   AudioPlayer _audioPlayer = AudioPlayer();
+  MediaPersistanceService _mediaPersistanceService = MediaPersistanceService();
   Completer _completer = Completer();
   BasicPlaybackState _skipState;
   bool _playing;
-  bool get hasNext => _queueIndex + 1 < queue.length;
+  bool get hasNext => _queueIndex + 1 < mediaItemsQueue.length;
   bool get hasPrevious => _queueIndex > 0;
-  MediaItem get mediaItem => queue[_queueIndex];
+  MediaItem get mediaItem => mediaItemsQueue[_queueIndex];
 
   BasicPlaybackState _eventToBasicState(AudioPlaybackEvent event) {
     if (event.buffering) {
@@ -43,6 +43,7 @@ class MediaPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onStart() async {
+    mediaItemsQueue = await _mediaPersistanceService.getPersistedMediaList();
     var playerStateSubscription = _audioPlayer.playbackStateStream
         .where((state) => state == AudioPlaybackState.completed)
         .listen((state) {
@@ -57,7 +58,7 @@ class MediaPlayerTask extends BackgroundAudioTask {
         );
       }
     });
-    AudioServiceBackground.setQueue(queue);
+    AudioServiceBackground.setQueue(mediaItemsQueue);
     await onSkipToNext();
     await _completer.future;
     playerStateSubscription.cancel();
@@ -86,8 +87,9 @@ class MediaPlayerTask extends BackgroundAudioTask {
   Future<void> onSkipToPrevious() => _skip(-1);
 
   Future<void> _skip(int offset) async {
+    if (mediaItemsQueue == null) return;
     final newPos = _queueIndex + offset;
-    if (!(newPos >= 0 && newPos < queue.length)) return;
+    if (!(newPos >= 0 && newPos < mediaItemsQueue.length)) return;
     if (_playing == null) {
       _playing = true;
     } else if (_playing) {

@@ -1,4 +1,5 @@
 import 'package:aqueduct/aqueduct.dart';
+import 'package:music_service/model/author.dart';
 import 'package:music_service/music_service.dart';
 
 import 'album.dart';
@@ -15,7 +16,7 @@ class _MediaItem {
   String title;
 
   @Relate(#mediaItems)
-  String author;
+  Author author;
 
   int duration;
 

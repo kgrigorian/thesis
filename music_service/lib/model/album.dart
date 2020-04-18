@@ -16,6 +16,8 @@ class _Album {
   @Relate(#albums)
   Author author;
 
+  String year;
+
   ManagedSet<MediaItem> mediaItems;
 
 }
