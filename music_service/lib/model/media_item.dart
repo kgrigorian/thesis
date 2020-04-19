@@ -20,6 +20,9 @@ class _MediaItem {
 
   int duration;
 
+  @Column(defaultValue: 'false')
+  bool favourite;
+
   String artUri;
 
   @Relate(#mediaItems)
