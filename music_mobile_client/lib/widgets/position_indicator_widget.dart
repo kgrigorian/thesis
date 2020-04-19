@@ -5,42 +5,46 @@ import 'package:flutter/material.dart';
 import 'package:music_mobile_client/main.dart';
 import 'package:rxdart/rxdart.dart';
 
-class PositionIndicator extends StatelessWidget {
-  PositionIndicator({
-    @required this.mediaItem,
-    @required this.state,
-  });
+class PositionIndicator extends StatefulWidget {
+  PositionIndicator({@required mediaItem})
+      : this.duration = mediaItem.duration.toDouble();
+  final double duration;
 
+  @override
+  _PositionIndicatorState createState() => _PositionIndicatorState();
+}
+
+class _PositionIndicatorState extends State<PositionIndicator> {
   final BehaviorSubject<double> _dragPositionSubject =
       BehaviorSubject.seeded(null);
-  final MediaItem mediaItem;
-  final PlaybackState state;
+  double seekPosition;
 
   @override
   Widget build(BuildContext context) {
-    double seekPos;
     return StreamBuilder(
-      stream: Rx.combineLatest2<double, double, double>(
+      stream: Rx.combineLatest3<double, PlaybackState, double, List<double>>(
           _dragPositionSubject.stream,
+          AudioService.playbackStateStream,
           Stream.periodic(Duration(milliseconds: 1000)),
-          (dragPosition, _) => dragPosition),
-      builder: (context, snapshot) {
-        double position = snapshot.data ?? state.currentPosition.toDouble();
-        double duration = mediaItem.duration.toDouble();
+          (dragPosition, playbackState, _) =>
+              [dragPosition, playbackState.currentPosition.toDouble()]),
+      builder: (BuildContext context, AsyncSnapshot<List<double>> snapshot) {
+        double position = snapshot.data[0] ?? snapshot.data[1];
         return Container(
           child: Column(
             children: [
-              if (duration != null)
+              if (widget.duration != null)
                 Slider(
                   min: 0.0,
-                  max: duration,
-                  value: seekPos ?? max(0.0, min(position, duration)),
+                  max: widget.duration,
+                  value:
+                      seekPosition ?? max(0.0, min(position, widget.duration)),
                   onChanged: (value) {
                     _dragPositionSubject.add(value);
                   },
                   onChangeEnd: (value) {
                     AudioService.seekTo(value.toInt());
-                    seekPos = value;
+                    seekPosition = value;
                     _dragPositionSubject.add(null);
                   },
                   activeColor: pinkColor,

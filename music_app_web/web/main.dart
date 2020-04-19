@@ -8,7 +8,7 @@ void main() {
   var uploadProgress = [];
 
 
-  void preventDefaults(dynamic event) {
+  void preventDefaults(MouseEvent event) {
     event.preventDefault();
     event.stopPropagation();
   }
@@ -37,7 +37,7 @@ void main() {
   dropArea.onDragLeave.listen(unhighlight);
 
 
-  void initializeProgress(numFiles) {
+  void initializeProgress(int numFiles) {
     progressBar.value = 0;
     uploadProgress = [];
 
@@ -46,7 +46,7 @@ void main() {
     }
   }
 
-  void updateProgress(fileNumber, percent) {
+  void updateProgress(int fileNumber, percent) {
     uploadProgress[fileNumber] = percent;
     var total = uploadProgress.reduce((tot, curr) => tot + curr) /
         uploadProgress.length;
@@ -54,7 +54,6 @@ void main() {
   }
 
   void previewFile(File file) {
-    print(file.name);
     var reader = FileReader();
     reader.readAsDataUrl(file);
     reader.onLoadEnd.listen((e) {

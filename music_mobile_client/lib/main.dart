@@ -11,12 +11,6 @@ void main() => runApp(new MyApp());
 
 final String api = DebugEnvironment().api;
 
-void audioPlayerTaskEntrypoint() async {
-  AudioServiceBackground.run(
-    () => MediaPlayerTask(),
-  );
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -32,6 +26,12 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+void audioPlayerTaskEntrypoint() async {
+  AudioServiceBackground.run(
+    () => MediaPlayerTask(),
+  );
 }
 
 var blueColor = Color(0xFF090e42);

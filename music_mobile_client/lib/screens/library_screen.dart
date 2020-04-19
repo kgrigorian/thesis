@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_mobile_client/core/bloc/media_library_bloc.dart';
-import 'package:music_mobile_client/widgets/track_list_item.dart';
+import 'package:music_mobile_client/widgets/track_list_item_widget.dart';
 
 import '../main.dart';
 
