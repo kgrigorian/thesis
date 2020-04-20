@@ -1,3 +1,4 @@
+import 'package:music_service/controller/favourites_controller.dart';
 import 'package:music_service/controller/upload_controller.dart';
 import 'package:music_service/service/file_system_service.dart';
 
@@ -40,6 +41,7 @@ class MusicServiceChannel extends ApplicationChannel {
 
     router.route("/music/*").link(() => FileController("music/"));
     router.route("/images/*").link(() => FileController("images/"));
+    router.route("/favourites").link(() => FavouritesController(context));
 
     router.route("/all").linkFunction((req) async {
       var query = Query<MediaItem>(context)
