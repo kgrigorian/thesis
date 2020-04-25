@@ -5,8 +5,6 @@ import 'package:music_mobile_client/widgets/player_appbar_widget.dart';
 import 'package:music_mobile_client/widgets/position_indicator_widget.dart';
 
 class MediaPlayerScreen extends StatelessWidget {
-  final List<MediaItem> mediaItems;
-  MediaPlayerScreen(this.mediaItems);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

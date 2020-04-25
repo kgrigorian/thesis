@@ -30,7 +30,7 @@ class TrackListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MediaPlayerScreen([mediaItem]),
+            builder: (context) => MediaPlayerScreen(),
           ),
         );
       },
