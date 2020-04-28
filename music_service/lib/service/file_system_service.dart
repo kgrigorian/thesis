@@ -1,11 +1,9 @@
-import 'dart:convert';
-import 'package:dart_tags/dart_tags.dart';
-import 'package:image/image.dart';
 import 'dart:io';
 
+import 'package:dart_tags/dart_tags.dart';
+import 'package:image/image.dart';
 
 class FileSystemService {
-
   Future<String> saveMediaFile(Stream<List<int>> bytesStream) async {
     final filePath =
         "music/" + DateTime.now().millisecondsSinceEpoch.toString() + ".mp3";

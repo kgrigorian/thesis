@@ -65,8 +65,8 @@ class MediaPlayerScreen extends StatelessWidget {
     return [
       Container(
         decoration: BoxDecoration(
-            image:
-                DecorationImage(image: NetworkImage(image), fit: BoxFit.cover)),
+          image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
+        ),
       ),
       Container(
         decoration: BoxDecoration(
