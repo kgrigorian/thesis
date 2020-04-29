@@ -10,7 +10,9 @@ import 'music_service.dart';
 class MusicServiceChannel extends ApplicationChannel {
   ManagedContext context;
   FileSystemService fileSystemService;
-
+  List<WebSocket> connectedSockets = [];
+  /// Initialize services in this method.
+  ///
   /// Implementing this method to initialize services, read values from [options]
   /// and any other initialization required before constructing [entryPoint].
   ///
@@ -26,6 +28,13 @@ class MusicServiceChannel extends ApplicationChannel {
         config.database.port,
         config.database.databaseName);
     context = ManagedContext(dataModel, psc);
+    messageHub.listen((event) {
+      if (event is Map && event["event"] == "radiolist_file_change_broadcast") {
+        connectedSockets.forEach((socket) {
+          socket.add(event["message"]);
+        });
+      }
+    });
     logger.onRecord.listen(
         (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
   }
@@ -40,6 +49,13 @@ class MusicServiceChannel extends ApplicationChannel {
     router.route("/music/*").link(() => FileController("music/"));
     router.route("/images/*").link(() => FileController("images/"));
     router.route("/favourites").link(() => FavouritesController(context));
+
+    router.route("/connect").linkFunction((request) async {
+    final socket = await WebSocketTransformer.upgrade(request.raw);
+    connectedSockets.add(socket);
+    return null;
+    });
+
 
     router.route("/all").linkFunction((req) async {
       var query = Query<MediaItem>(context)
@@ -60,6 +76,19 @@ class MusicServiceChannel extends ApplicationChannel {
 
     router.route("/upload").link(() => UploadController(context));
 
+    router.route("/kek").linkFunction((req) async {
+      connectedSockets.forEach((socket) => socket.add('mmmm'));
+      return Response.ok({});
+    }
+    );
+
     return router;
+  }
+
+  void onFileUpdate() {
+    connectedSockets.forEach((socket) {
+      socket.add('dd');
+    });
+    messageHub.add({"event": "radiolist_file_change_broadcast"});
   }
 }

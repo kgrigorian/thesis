@@ -28,29 +28,6 @@ class LibraryScreen extends StatelessWidget {
                             fontSize: 38.0),
                       ),
                       SizedBox(height: 16.0),
-                      Row(
-                        children: <Widget>[
-                          AlbumCard('assets/images/blue.jpg', 'Extremely loud'),
-                          SizedBox(
-                            width: 16.0,
-                          ),
-                          AlbumCard(
-                              'assets/images/pink.jpg', 'Calm & relaxing'),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          AlbumCard(
-                              'assets/images/orange.jpg', 'Extremely loud'),
-                          SizedBox(
-                            width: 16.0,
-                          ),
-                          AlbumCard('assets/images/yellow.jpg', 'Old Soul'),
-                        ],
-                      ),
                       Text(
                         'All tracks',
                         style: TextStyle(
