@@ -5,6 +5,7 @@ import 'package:music_mobile_client/extensions/media_item_extension.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MediaPersistanceService {
+
   Future<bool> persistMediaList(List<MediaItem> mediaItems) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return await prefs.setString('ms', jsonEncode(mediaToJson(mediaItems)));
@@ -17,3 +18,7 @@ class MediaPersistanceService {
         (jsonDecode(string) as Iterable).map((m) => mediaFromJson(m)));
   }
 }
+
+
+
+
